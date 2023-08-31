@@ -1,0 +1,89 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+ 
+ form{
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        flex-direction:column;
+        height:50vh;
+ }
+ input{
+        width:50%;
+        height:50px;
+        border-radius:10px;
+        border:1px solid #ccc;
+        outline:none;
+        padding:0 10px;
+        font-size:20px;
+ }
+
+ button{
+        width:50%;
+        height:50px;
+        border-radius:10px;
+        border:1px solid #ccc;
+        outline:none;
+        padding:0 10px;
+        font-size:20px;
+        cursor:pointer;
+        margin-top:10px;
+ }
+
+ ul{
+        list-style:none;
+        padding:0;
+        margin:0;
+        height:50vh;
+        overflow-y:scroll;
+ }
+ li{
+        padding:10px;
+        border-bottom:1px solid #ccc;
+ }
+
+</style>
+<body>
+    
+
+    <form id="form">
+        <input  id="input" autocomplete="off">
+        <button>Send</button>
+    </form>
+
+
+    <ul id="messages"></ul>
+    <script  src="/socket.io/socket.io.js"></script>
+
+<script>
+     var sock = io();
+
+     var messages = document.getElementById('messages');
+     var form = document.getElementById('form');
+     var input = document.getElementById('input');
+
+     form.addEventListener('submit',function(e){
+        e.preventDefault();
+        if(input.value){
+            sock.emit('message',input.value);
+            input.value = '';
+        }
+     });
+
+     sock.on('message', function(msg) {
+    var item = document.createElement('li');
+    item.textContent = msg;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+
+  });
+</script>
+
+</body>
+</html>
