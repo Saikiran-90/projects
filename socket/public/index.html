@@ -3,9 +3,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script  src="/socket.io/socket.io.js"></script>
 </head>
 
 <style>
+
+
+body{
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: sans-serif;
+        background-color: black;
+    }
+
+    h1{
+              text-align: center;
+              color: green;
+              font-family: "consolas";
+    }
  
  form{
         display:flex;
@@ -42,33 +58,47 @@
         margin:0;
         height:50vh;
         overflow-y:scroll;
+        color: green;
+
  }
  li{
         padding:10px;
         font-family: "Source Sans Pro","Lucida Grande" ,sans-serif;
         font-weight: 300;
         font-size: 20px;
-        border-bottom:1px dotted #ccc;
+        color: green;
+        /* border-bottom:1px dotted #ccc; */
+        border-right: 1px solid #ccc;
  }
 
 </style>
 
 <body>
+       <h1> Welcome!...</h1>   
 
+       <ul id="messages"></ul>
+                
        <form id="form">
-        <input  id="input" name="message"  autocomplete="off">
+        <input  id="msg-input" name="message"  autocomplete="off">
         <button>Send</button>
+        
     </form>
 
-    <ul id="messages"></ul>
-    <script  src="/socket.io/socket.io.js"></script>
+    
+ 
 
 <script>
+  
      var sock = io();
 
      var messages = document.getElementById('messages');
      var form = document.getElementById('form');
-     var input = document.getElementById('input');
+     var input = document.getElementById('msg-input');
+     const name =  prompt("Your Good Name!...");
+
+     function messageFocus(){
+       input.focus();
+     }
 
      form.addEventListener('submit',function(e){
         e.preventDefault();
@@ -78,14 +108,22 @@
         }
      });
 
-     sock.on('message', function(msg) {
+     sock.emit('new-user-joined',name);
+
+     sock.on('user-joined',name => {
+        var item = document.createElement('li');
+        item.textContent = name + ' joined the chat';
+        messages.appendChild(item);
+        window.scrollBy(0, document.body.scrollHeight);
+     });
+
+     sock.on('message', (msg)=> {
     var item = document.createElement('li');
-    item.textContent = msg;
+       item.textContent = msg.name + ' : ' + msg.message;
     messages.appendChild(item);
-    window.scrollTo(0, document.body.scrollHeight);
-
+    window.scrollBy(0, document.body.scrollHeight);
   });
-</script>
 
+</script>
 </body>
 </html>
